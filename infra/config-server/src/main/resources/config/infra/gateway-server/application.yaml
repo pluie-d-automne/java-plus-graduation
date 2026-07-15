@@ -1,0 +1,41 @@
+server:
+  # Для Gateway - конкретный порт, чтобы пользователи всегда могли обращаться к нему
+  # по одному и тому же адресу
+  port: 8080
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator.enabled: true
+        httpclient:
+          connect-timeout: 90000  # 90 секунд
+          response-timeout: 90s   # 90 секунд
+      routes:
+        - id: core_main_service_admin
+          uri: lb://main-service
+          predicates:
+            - Path=/admin/**
+        - id: core_main_service_categories
+          uri: lb://main-service
+          predicates:
+            - Path=/categories/**
+        - id: core_main_service_comments
+          uri: lb://main-service
+          predicates:
+            - Path=/comments/**
+        - id: core_main_service_compilations
+          uri: lb://main-service
+          predicates:
+            - Path=/compilations/**
+        - id: core_main_service_users
+          uri: lb://main-service
+          predicates:
+            - Path=/users/**
+        - id: core_main_service_events
+          uri: lb://main-service
+          predicates:
+            - Path=/events/**
+        - id: core_main_service_events
+          uri: lb://main-service
+          predicates:
+            - Path=/events/**
