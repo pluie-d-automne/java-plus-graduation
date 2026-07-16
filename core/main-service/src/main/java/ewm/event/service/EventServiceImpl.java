@@ -121,12 +121,11 @@ public class EventServiceImpl implements EventService {
         }
 
         LocalDateTime start = event.getPublishedOn() != null ? event.getPublishedOn() : event.getCreatedOn();
-        ParamDto paramDto = new ParamDto(start, LocalDateTime.now(), List.of(url), false);
 
         EventFullDto fullDto = eventMapper.toFullDto(event);
 
         fullDto.setConfirmedRequests(requestRepository.countByEventAndStatus(event, ParticipationStatus.CONFIRMED));
-        fullDto.setViews(getViews(paramDto));
+        fullDto.setViews(getViews(new ParamDto(start, LocalDateTime.now(), List.of(url), false)));
 
         return fullDto;
     }
@@ -303,9 +302,9 @@ public class EventServiceImpl implements EventService {
     }
 
     private Long getViews(ParamDto paramDto) {
-        List<StatsDto> views = statClient.getStats(paramDto);
+        List<StatsDto> views = statClient.getStats(paramDto.start(), paramDto.end(), paramDto.uris(), paramDto.unique());
         Long viewsNum = views.isEmpty() ? 0L : views.getFirst().hits();
-        log.info("Views requested for: {}; Result: {}", paramDto, viewsNum);
+        log.info("Views requested for: {}. Result: {}", paramDto, viewsNum);
         return viewsNum;
     }
 
@@ -323,7 +322,7 @@ public class EventServiceImpl implements EventService {
 
             ParamDto paramDto = new ParamDto(start, LocalDateTime.now(), uris, unique);
             log.info("Try to get statistics for {}", paramDto);
-            List<StatsDto> stats = statClient.getStats(paramDto);
+            List<StatsDto> stats = statClient.getStats(paramDto.start(),  paramDto.end(), paramDto.uris(), paramDto.unique());
 
             return stats.stream()
                     .filter(statsDto -> {

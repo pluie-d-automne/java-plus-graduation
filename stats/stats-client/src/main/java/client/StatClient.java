@@ -1,10 +1,10 @@
 package client;
 
 import ewm.HitDto;
-import ewm.ParamDto;
 import ewm.StatsDto;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +19,8 @@ public interface StatClient {
     public void createHit(@Valid @RequestBody HitDto hitDto);
 
     @GetMapping("/stats")
-    public List<StatsDto> getStats(@Valid @RequestBody ParamDto paramDto);
-
-    @GetMapping("/stats")
-    public List<StatsDto> getStats(@Valid @RequestParam(name="start") LocalDateTime start,
-                                   @RequestParam(name="end") LocalDateTime end,
-                                   @RequestParam(name="uris") List<String> uris);
+    public List<StatsDto> getStats(@Valid @RequestParam(name="start")  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                   @RequestParam(name="end")  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                   @RequestParam(name="uris") List<String> uris,
+                                   @RequestParam(name="unique", defaultValue = "false") Boolean unique);
 }
