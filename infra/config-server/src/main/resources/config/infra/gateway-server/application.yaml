@@ -15,27 +15,62 @@ spring:
           uri: lb://main-service
           predicates:
             - Path=/admin/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
         - id: core_main_service_categories
           uri: lb://main-service
           predicates:
             - Path=/categories/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
         - id: core_main_service_comments
           uri: lb://main-service
           predicates:
             - Path=/comments/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
         - id: core_main_service_compilations
           uri: lb://main-service
           predicates:
             - Path=/compilations/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
         - id: core_main_service_users
           uri: lb://main-service
           predicates:
             - Path=/users/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
         - id: core_main_service_events
           uri: lb://main-service
           predicates:
             - Path=/events/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
         - id: core_main_service_events
           uri: lb://main-service
           predicates:
             - Path=/events/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE

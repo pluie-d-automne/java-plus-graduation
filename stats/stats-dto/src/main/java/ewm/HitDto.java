@@ -1,6 +1,5 @@
 package ewm;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,6 +16,5 @@ public record HitDto(
         String ip,
 
         @NotNull(message = "Дата не может быть пустой")
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime timestamp) {
 }

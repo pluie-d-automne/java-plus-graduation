@@ -267,11 +267,12 @@ public class EventServiceImpl implements EventService {
                 true);
 
         EventFullDto fullDto = eventMapper.toFullDto(event);
+        Long views = getViews(paramDto);
 
         fullDto.setConfirmedRequests(requestRepository.countByEventAndStatus(event, ParticipationStatus.CONFIRMED));
-        fullDto.setViews(getViews(paramDto));
+        fullDto.setViews(views);
 
-        log.info("Получено событие с id = {}", id);
+        log.info("Получено событие с id = {}, views: {}/{}", id, fullDto.getViews(), views);
 
         return fullDto;
     }
@@ -303,8 +304,9 @@ public class EventServiceImpl implements EventService {
 
     private Long getViews(ParamDto paramDto) {
         List<StatsDto> views = statClient.getStats(paramDto);
-
-        return views.isEmpty() ? 0L : views.getFirst().hits();
+        Long viewsNum = views.isEmpty() ? 0L : views.getFirst().hits();
+        log.info("Views requested for: {}; Result: {}", paramDto, viewsNum);
+        return viewsNum;
     }
 
     public Map<Long, Long> getViewsMap(List<Event> events, boolean unique) {

@@ -13,9 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -25,6 +27,7 @@ import java.util.List;
 public class StatsController implements StatClient {
     private final StatsService statsService;
 
+    @Override
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
     public void createHit(@Valid @RequestBody HitDto hitDto) {
@@ -32,9 +35,20 @@ public class StatsController implements StatClient {
         statsService.createHit(hitDto);
     }
 
+    @Override
     @GetMapping("/stats")
     public List<StatsDto> getStats(@Valid @RequestBody ParamDto paramDto) {
         log.info("Запрошено получение статистики: {}", paramDto);
+        return statsService.getStats(paramDto);
+    }
+
+    @Override
+    @GetMapping("/stats")
+    public List<StatsDto> getStats(@Valid @RequestParam(name="start") LocalDateTime start,
+                                   @RequestParam(name="end") LocalDateTime end,
+                                   @RequestParam(name="uris") List<String> uris) {
+        log.info("Запрошено получение статистики start: {}, end: {}, uris: {}", start, end, uris);
+        ParamDto paramDto = new ParamDto(start, end, uris, false);
         return statsService.getStats(paramDto);
     }
 }

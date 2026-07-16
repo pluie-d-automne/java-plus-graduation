@@ -12,4 +12,4 @@ spring:
     properties.hibernate.format_sql: true
   sql.init.mode: always
 
-format.pattern.datetime: yyyy-MM-dd HH:mm:ss
+#format.pattern.datetime: yyyy-MM-dd HH:mm:ss
