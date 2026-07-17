@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.3.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -19,17 +19,34 @@
 
 	<!-- Для многомодульного проекта(сервис,dto,client,server) -->
 	<modules>
-		<module>stats/stats-dto</module>
-		<module>stats/stats-client</module>
-		<module>stats/stats-server</module>
-		<module>main-service</module>
+		<module>stats</module>
+        <module>core</module>
+		<module>infra</module>
 	</modules>
 
 	<properties>
 		<java.version>21</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring-cloud-dependencies.version>2023.0.3</spring-cloud-dependencies.version>
+
+		<!--       Plugins       -->
+		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
 	</properties>
 
+	<dependencyManagement>
+		<dependencies>
+			<!--    Spring Cloud        -->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!--    Spring Cloud        -->
+		</dependencies>
+	</dependencyManagement>
 	<build>
 		<pluginManagement>
 			<plugins>
