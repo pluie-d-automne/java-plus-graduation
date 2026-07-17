@@ -1,12 +1,12 @@
 package ewm.event.mapper;
 
 import ewm.category.model.Category;
+import ewm.core.mapper.UserMapper;
 import ewm.event.dto.EventFullDto;
 import ewm.event.dto.EventShortDto;
 import ewm.event.dto.NewEventDto;
 import ewm.event.dto.UpdateEventUserRequest;
 import ewm.event.model.Event;
-import ewm.user.mapper.UserMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -28,7 +28,7 @@ public interface EventMapper {
 
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "state", ignore = true)
-    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "initiatorId", ignore = true)
     @Mapping(target = "category", ignore = true)
     Event toEvent(NewEventDto dto);
 

@@ -4,7 +4,6 @@ import ewm.request.model.ConfirmedRequestCount;
 import ewm.event.model.Event;
 import ewm.request.model.ParticipationRequest;
 import ewm.request.model.ParticipationStatus;
-import ewm.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,10 +11,10 @@ import java.util.List;
 
 public interface ParticipationRequestRepository extends JpaRepository<ParticipationRequest, Long> {
     // Список своих заявок на участия в событиях
-    List<ParticipationRequest> findByRequester(User requester);
+    List<ParticipationRequest> findByRequester(Long requesterId);
 
     // Проверяем наличие такого запроса
-    boolean existsByRequesterAndEvent(User requester, Event event);
+    boolean existsByRequesterAndEvent(Long requesterId, Event event);
 
     // Количество заявок на событие
     Long countByEventAndStatus(Event event, ParticipationStatus status);

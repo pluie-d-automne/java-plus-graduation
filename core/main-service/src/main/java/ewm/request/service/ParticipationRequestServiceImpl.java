@@ -1,20 +1,20 @@
 package ewm.request.service;
 
+import ewm.core.dto.UserShortDto;
+import ewm.core.exception.ConflictException;
+import ewm.core.exception.NotFoundException;
+import ewm.core.exception.ValidationException;
 import ewm.request.dto.EventRequestStatusUpdateRequest;
 import ewm.event.model.Event;
 import ewm.event.model.EventState;
 import ewm.event.repository.EventRepository;
-import ewm.exception.ConflictException;
-import ewm.exception.NotFoundException;
-import ewm.exception.ValidationException;
 import ewm.request.dto.EventRequestStatusUpdateResult;
 import ewm.request.dto.ParticipationRequestDto;
 import ewm.request.mapper.ParticipationRequestMapper;
 import ewm.request.model.ParticipationRequest;
 import ewm.request.model.ParticipationStatus;
 import ewm.request.repository.ParticipationRequestRepository;
-import ewm.user.model.User;
-import ewm.user.repository.UserRepository;
+import ewm.core.client.UserClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,16 +28,16 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
-    private final UserRepository userRepository;
+    private final UserClient userClient;
     private final EventRepository eventRepository;
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper requestMapper;
 
     @Override
     public List<ParticipationRequestDto> getRequestByUserId(Long userId) {
-        User requester = findUserById(userId);
+        findUserById(userId);
 
-        List<ParticipationRequest> requests = requestRepository.findByRequester(requester);
+        List<ParticipationRequest> requests = requestRepository.findByRequester(userId);
 
         log.info("Получен список заявок на участия в событиях пользователя с id = {}", userId);
         return requests.stream()
@@ -48,7 +48,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public ParticipationRequestDto addRequest(Long userId, Long eventId) {
-        User requester = findUserById(userId);
+        findUserById(userId);
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
@@ -56,11 +56,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         ParticipationRequest request = new ParticipationRequest();
         Long confirmedRequests = requestRepository.countByEventAndStatus(event, ParticipationStatus.CONFIRMED);
 
-        if (requestRepository.existsByRequesterAndEvent(requester, event)) {
+        if (requestRepository.existsByRequesterAndEvent(userId, event)) {
             throw new ConflictException("Participation request already exists");
         }
 
-        if (event.getInitiator().getId().equals(userId)) {
+        if (event.getInitiatorId().equals(userId)) {
             throw new ConflictException("The initiator of the event cannot add a request to participate in their own event");
         }
 
@@ -78,7 +78,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             request.setStatus(ParticipationStatus.PENDING);
         }
 
-        request.setRequester(requester);
+        request.setRequesterId(userId);
         request.setEvent(event);
 
         ParticipationRequest saveRequest = requestRepository.save(request);
@@ -96,7 +96,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         ParticipationRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Request с id=" + requestId + " was not found"));
 
-        if (!request.getRequester().getId().equals(userId)) {
+        if (!request.getRequesterId().equals(userId)) {
             throw new ValidationException("You can only cancel your own request");
         }
 
@@ -117,7 +117,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("Event with id=" + eventId + " not found for user with id=" + userId);
         }
 
@@ -137,7 +137,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new NotFoundException("Event with id=" + eventId + " not found for user with id=" + userId);
         }
 
@@ -184,8 +184,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         return new EventRequestStatusUpdateResult(confirmed, rejected);
     }
 
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
+    private UserShortDto findUserById(Long userId) {
+        List<UserShortDto> userShortDtos = userClient.getUsersByIds(List.of(userId));
+
+        if (userShortDtos.isEmpty()) {
+            throw new NotFoundException("User with id=" + userId + " was not found");
+        }
+
+        return userShortDtos.get(0);
     }
 }

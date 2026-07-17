@@ -1,7 +1,6 @@
 package ewm.request.model;
 
 import ewm.event.model.Event;
-import ewm.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,7 +36,7 @@ public class ParticipationRequest {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id", nullable = false)
     @ToString.Exclude
-    private User requester;
+    private Long requesterId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)

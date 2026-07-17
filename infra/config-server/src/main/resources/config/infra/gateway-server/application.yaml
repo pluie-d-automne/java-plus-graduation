@@ -12,6 +12,15 @@ spring:
           response-timeout: 90s   # 90 секунд
       routes:
         - id: core_main_service_admin
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+          filters:
+            - name: Retry
+              args:
+                retries: 50
+                statuses: SERVICE_UNAVAILABLE
+        - id: core_main_service_admin
           uri: lb://main-service
           predicates:
             - Path=/admin/**

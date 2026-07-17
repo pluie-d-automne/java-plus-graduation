@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ParticipationRequestMapper {
-    @Mapping(target = "requester", source = "requester.id")
+    @Mapping(target = "requester", source = "requesterId")
     @Mapping(target = "event", source = "event.id")
     ParticipationRequestDto mapToRequestDto(ParticipationRequest request);
 }

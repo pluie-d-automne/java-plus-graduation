@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableFeignClients("client")
+@EnableFeignClients(basePackages = {"client", "ewm.core.client"})
 public class MainApplication {
     public static void main(String[] args) {
         SpringApplication.run(MainApplication.class, args);

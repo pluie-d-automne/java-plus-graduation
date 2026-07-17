@@ -8,6 +8,10 @@ import ewm.ParamDto;
 import ewm.StatsDto;
 import ewm.category.model.Category;
 import ewm.category.repository.CategoryRepository;
+import ewm.core.dto.UserShortDto;
+import ewm.core.exception.ConflictException;
+import ewm.core.exception.NotFoundException;
+import ewm.core.exception.ValidationException;
 import ewm.event.dto.*;
 import ewm.event.mapper.EventMapper;
 import ewm.event.model.Location;
@@ -15,15 +19,11 @@ import ewm.request.model.ConfirmedRequestCount;
 import ewm.event.model.Event;
 import ewm.event.model.EventState;
 import ewm.event.model.QEvent;
-import ewm.exception.ValidationException;
 import ewm.request.model.ParticipationStatus;
 import ewm.request.model.QParticipationRequest;
 import ewm.request.repository.ParticipationRequestRepository;
-import ewm.user.model.User;
+import ewm.core.client.UserClient;
 import ewm.event.repository.EventRepository;
-import ewm.exception.ConflictException;
-import ewm.exception.NotFoundException;
-import ewm.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +47,7 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
     private final ParticipationRequestRepository requestRepository;
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
+    private final UserClient userClient;
     private final EventMapper eventMapper;
     private final CategoryRepository categoryRepository;
     private final StatClient statClient;
@@ -86,7 +86,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto addEventPrivate(Long userId, NewEventDto dto) {
         log.info("Adding event for user id={}", userId);
 
-        User user = getUserOrThrow(userId);
+       getUserOrThrow(userId);
 
         if (dto.eventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ConflictException("Event date must be at least 2 hours from now");
@@ -99,7 +99,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventMapper.toEvent(dto);
 
         event.setCategory(category);
-        event.setInitiator(user);
+        event.setInitiatorId(userId);
         event.setState(EventState.PENDING);
         event.setCreatedOn(LocalDateTime.now());
 
@@ -116,7 +116,7 @@ public class EventServiceImpl implements EventService {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new ConflictException("Event does not belong to user");
         }
 
@@ -138,7 +138,7 @@ public class EventServiceImpl implements EventService {
         getUserOrThrow(userId);
         Event event = getEventOrThrow(eventId);
 
-        if (!event.getInitiator().getId().equals(userId)) {
+        if (!event.getInitiatorId().equals(userId)) {
             throw new ConflictException("Event does not belong to user");
         }
 
@@ -276,9 +276,14 @@ public class EventServiceImpl implements EventService {
         return fullDto;
     }
 
-    private User getUserOrThrow(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " was not found"));
+    private UserShortDto getUserOrThrow(Long userId) {
+        List<UserShortDto> userShortDtos = userClient.getUsersByIds(List.of(userId));
+
+        if (userShortDtos.isEmpty()) {
+            throw new NotFoundException("User with id=" + userId + " was not found");
+        }
+
+        return userShortDtos.get(0);
     }
 
     private Event getEventOrThrow(Long eventId) {
@@ -359,7 +364,7 @@ public class EventServiceImpl implements EventService {
         BooleanBuilder predicate = new BooleanBuilder();
 
         if (filter.users() != null && !filter.users().isEmpty()) {
-            predicate.and(event.initiator.id.in(filter.users()));
+            predicate.and(event.initiatorId.in(filter.users()));
         }
 
         if (filter.states() != null && !filter.states().isEmpty()) {

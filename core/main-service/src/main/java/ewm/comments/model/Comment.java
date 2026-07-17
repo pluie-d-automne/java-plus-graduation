@@ -1,7 +1,6 @@
 package ewm.comments.model;
 
 import ewm.event.model.Event;
-import ewm.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,10 +44,9 @@ public class Comment {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
     @Column(name = "created_on", nullable = false)
     @CurrentTimestamp

@@ -2,7 +2,6 @@ package ewm.event.model;
 
 import ewm.category.model.Category;
 import ewm.compilation.model.Compilation;
-import ewm.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -55,7 +54,7 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "initiator_id")
-    private User initiator;
+    private Long initiatorId;
 
     @Embedded
     private Location location;

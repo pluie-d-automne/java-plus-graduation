@@ -13,12 +13,13 @@ import ewm.comments.model.Comment;
 import ewm.comments.model.CommentStatus;
 import ewm.comments.model.QComment;
 import ewm.comments.repository.CommentRepository;
+import ewm.core.dto.UserShortDto;
+import ewm.core.exception.ConflictException;
+import ewm.core.exception.NotAuthorized;
+import ewm.core.exception.NotFoundException;
+import ewm.core.exception.ValidationException;
 import ewm.event.repository.EventRepository;
-import ewm.exception.ConflictException;
-import ewm.exception.NotAuthorized;
-import ewm.exception.NotFoundException;
-import ewm.exception.ValidationException;
-import ewm.user.repository.UserRepository;
+import ewm.core.client.UserClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +39,7 @@ import java.util.stream.StreamSupport;
 public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
+    private final UserClient userClient;
     private final EventRepository eventRepository;
 
     @Override
@@ -58,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = existsComment(updCommentParam.commentId());
         existsUser(updCommentParam.author());
 
-        if (!comment.getAuthor().getId().equals(updCommentParam.author())) {
+        if (!comment.getAuthorId().equals(updCommentParam.author())) {
             throw new NotAuthorized("Comment can be edited only by its author.");
         }
 
@@ -74,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
     public void delete(Long userId, Long commentId) {
         Comment comment = existsComment(commentId);
 
-        if (!comment.getAuthor().getId().equals(userId)) {
+        if (!comment.getAuthorId().equals(userId)) {
             throw new NotAuthorized("Comment can be deleted only by its author.");
         }
 
@@ -83,7 +84,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> findAllByAuthor(Long userId) {
-        BooleanExpression byAuthorId = QComment.comment1.author.id.eq(userId);
+        BooleanExpression byAuthorId = QComment.comment1.authorId.eq(userId);
         Iterable<Comment> comments = commentRepository.findAll(byAuthorId);
         List<CommentDto> commentsDto = StreamSupport.stream(comments.spliterator(), false)
                 .map(commentMapper::toCommentDto)
@@ -97,7 +98,7 @@ public class CommentServiceImpl implements CommentService {
         existsUser(userId);
         existsEvent(eventId);
 
-        BooleanExpression byEventAndAuthorId = QComment.comment1.author.id.eq(userId)
+        BooleanExpression byEventAndAuthorId = QComment.comment1.authorId.eq(userId)
                 .and(QComment.comment1.event.id.eq(eventId));
         Iterable<Comment> comments = commentRepository.findAll(byEventAndAuthorId);
         List<CommentDto> commentsDto = StreamSupport.stream(comments.spliterator(), false)
@@ -112,7 +113,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = existsComment(commentId);
         existsUser(userId);
 
-        if (!comment.getAuthor().getId().equals(userId)) {
+        if (!comment.getAuthorId().equals(userId)) {
             throw new NotAuthorized("Only author is allowed to see this comment");
         }
 
@@ -188,7 +189,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (filter.users() != null && !filter.users().isEmpty()) {
-            predicate.and(qComment.author.id.in(filter.users()));
+            predicate.and(qComment.authorId.in(filter.users()));
         }
 
         if (filter.eventId() != null) {
@@ -255,8 +256,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void existsUser(Long userId) {
-        userRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException(String.format("User with id=%d was not found", userId)));
+        List<UserShortDto> usersFound = userClient.getUsersByIds(List.of(userId));
+
+        if (usersFound.isEmpty()) {
+            throw new NotFoundException(String.format("User with id=%d was not found", userId));
+        }
     }
 
     private void existsEvent(Long eventId) {
