@@ -18,8 +18,8 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@FeignClient(name = "user-client", path = "/users")
-@RequestMapping("/users")
+@FeignClient(name = "user-client")
+@RequestMapping("/user-client")
 public class UserController implements UserClient {
 
     private final UserService userService;
