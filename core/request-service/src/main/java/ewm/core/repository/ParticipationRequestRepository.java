@@ -13,17 +13,17 @@ public interface ParticipationRequestRepository extends JpaRepository<Participat
     List<ParticipationRequest> findByRequesterId(Long requesterId);
 
     // Проверяем наличие такого запроса
-    boolean existsByRequesterAndEventId(Long requesterId, Long eventId);
+    boolean existsByRequesterIdAndEventId(Long requesterId, Long eventId);
 
     // Количество заявок на событие
     Long countByEventIdAndStatus(Long eventId, ParticipationStatus status);
 
     // Количество заявок для событий
     @Query("""
-            SELECT new ewm.core.dto.ConfirmedRequestCount(r.event.id, COUNT(r.id))
+            SELECT new ewm.core.dto.ConfirmedRequestCount(r.eventId, COUNT(r.id))
             FROM ParticipationRequest AS r
-            WHERE r.event.id IN :eventIds AND r.status = 'CONFIRMED'
-            GROUP BY r.event.id
+            WHERE r.eventId IN :eventIds AND r.status = 'CONFIRMED'
+            GROUP BY r.eventId
             """)
     List<ConfirmedRequestCount> findAllConfirmedRequestsByEventId(List<Long> eventIds);
 

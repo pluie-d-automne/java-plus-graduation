@@ -60,8 +60,7 @@ public class Event {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "initiator_id")
+    @Column(name = "initiator_id")
     private Long initiatorId;
 
     @Embedded

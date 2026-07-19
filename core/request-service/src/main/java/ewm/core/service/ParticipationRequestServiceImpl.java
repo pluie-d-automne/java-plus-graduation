@@ -58,7 +58,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         ParticipationRequest request = new ParticipationRequest();
         Long confirmedRequests = requestRepository.countByEventIdAndStatus(eventId, ParticipationStatus.CONFIRMED);
 
-        if (requestRepository.existsByRequesterAndEventId(userId, eventId)) {
+        if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
             throw new ConflictException("Participation request already exists");
         }
 
