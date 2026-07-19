@@ -11,15 +11,15 @@ spring:
           connect-timeout: 90000  # 90 секунд
           response-timeout: 90s   # 90 секунд
       routes:
-        - id: request-client
+        - id: request_client
           uri: lb://request-service
           predicates:
             - Path=/request-client/**
-        - id: user-client
+        - id: user_client
           uri: lb://user-service
           predicates:
-            - Path=/user-client/**
-        - id: event-client
+            - Path=/users/user-client/**
+        - id: event_client
           uri: lb://event-service
           predicates:
             - Path=/event-client/**
@@ -62,12 +62,12 @@ spring:
         - id: core_comment_service_private
           uri: lb://comment-service
           predicates:
-            - Path=/users/{userId}/comments
+            - Path=/users/{userId}/comments/**
         - id: core_event_service_private
           uri: lb://event-service
           predicates:
-            - Path=/users/{userId}/events
+            - Path=/users/{userId}/events/**
         - id: core_request_service_private
           uri: lb://request-service
           predicates:
-            - Path=/users/{userId}/requests
+            - Path=/users/{userId}/requests/**

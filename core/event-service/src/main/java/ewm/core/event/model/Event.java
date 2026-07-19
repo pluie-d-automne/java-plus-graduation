@@ -47,7 +47,7 @@ public class Event {
 
     @Column(name = "participant_confirmed")
     @ToString.Exclude
-    private Integer participantConfirmed;
+    private Long participantConfirmed;
 
     private Boolean requestModeration;
 

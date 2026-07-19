@@ -36,4 +36,6 @@ public interface EventService {
     Event existsEvent(Long eventId);
 
     List<EventFullDto> getEventsByIds(List<Long> eventIds);
+
+    void updateEventParticipantConfirmedCnt(Long eventId, Long cnt);
 }

@@ -1,6 +1,7 @@
 package ewm.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,8 @@ public class EventFullDto {
         private UserShortDto initiator;
         private LocationDto location;
         private Boolean paid;
+
+        @PositiveOrZero
         private Integer participantLimit;
 
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

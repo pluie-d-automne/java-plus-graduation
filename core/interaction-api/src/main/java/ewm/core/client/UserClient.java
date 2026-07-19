@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "user-client")
+@FeignClient(name = "user-service", path = "/users/user-client")
 public interface UserClient {
     @GetMapping
     List<UserShortDto> getUsersByIds(@RequestParam(name="ids") List<Long> userIds);

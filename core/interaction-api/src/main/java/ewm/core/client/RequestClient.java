@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "request-client")
+@FeignClient(name = "request-service", path = "/request-client")
 public interface RequestClient {
     @GetMapping
     List<ParticipationRequestDto> getRequestsByIds(@RequestParam(name="ids") List<Long> requestIds);

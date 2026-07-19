@@ -5,7 +5,6 @@ import ewm.core.client.UserClient;
 import ewm.core.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +17,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@FeignClient(name = "user-client")
-@RequestMapping("/user-client")
+@RequestMapping("/users/user-client")
 public class UserController implements UserClient {
 
     private final UserService userService;

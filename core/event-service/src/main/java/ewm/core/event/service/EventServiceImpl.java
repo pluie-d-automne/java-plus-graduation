@@ -498,4 +498,14 @@ public class EventServiceImpl implements EventService {
     public List<EventFullDto> getEventsByIds(List<Long> eventIds) {
         return eventRepository.findAllById(eventIds).stream().map(eventMapper::toFullDto).toList();
     }
+
+    @Override
+    public void updateEventParticipantConfirmedCnt(Long eventId, Long cnt) {
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException("Event with id=" + eventId + " does not exisit.")
+        );
+        event.setParticipantConfirmed(cnt);
+        Event eventUpdated = eventRepository.save(event);
+        log.info("Updated event: {}", eventUpdated);
+    }
 }

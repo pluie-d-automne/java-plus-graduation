@@ -7,6 +7,7 @@ import ewm.core.dto.AdminCommentSearchFilter;
 import ewm.core.dto.CommentDto;
 import ewm.core.dto.CommentSearchParams;
 import ewm.core.dto.EventFullDto;
+import ewm.core.dto.EventPreviewDto;
 import ewm.core.dto.PostCommentParam;
 import ewm.core.dto.UpdateCommentParam;
 import ewm.core.dto.UpdateCommentStatusRequest;
@@ -285,4 +286,5 @@ public class CommentServiceImpl implements CommentService {
             throw new NotFoundException(String.format("Event with id=%d was not found", eventId));
         }
     }
+
 }

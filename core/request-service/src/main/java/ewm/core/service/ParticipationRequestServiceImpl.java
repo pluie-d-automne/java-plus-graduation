@@ -179,6 +179,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                     rejected.add(requestMapper.mapToRequestDto(request));
                 }
             }
+            // Update confirmed request cnt for event
+            Long approvedRequestsCnt = countByEventIdAndStatus(eventId, ParticipationStatus.CONFIRMED);
+            eventClient.updateEventParticipantConfirmedCnt(eventId, approvedRequestsCnt);
         }
 
         requestRepository.saveAll(requests);
@@ -204,7 +207,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     @Override
     public Long countByEventIdAndStatus(Long eventId, ParticipationStatus status) {
-        return countByEventIdAndStatus(eventId, status);
+        return requestRepository.countByEventIdAndStatus(eventId, status);
     }
 
 

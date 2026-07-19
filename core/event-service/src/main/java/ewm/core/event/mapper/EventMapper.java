@@ -1,7 +1,6 @@
 package ewm.core.event.mapper;
 
 import ewm.core.category.model.Category;
-import ewm.core.mapper.UserMapper;
 import ewm.core.dto.EventFullDto;
 import ewm.core.event.dto.EventShortDto;
 import ewm.core.event.dto.NewEventDto;
@@ -14,16 +13,18 @@ import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring",
-        uses = {UserMapper.class},
+        uses = {MapUtils.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EventMapper {
 
     @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "views", ignore = true)
+    @Mapping(target = "initiator", source = "initiatorId")
     EventShortDto toShortDto(Event event);
 
     @Mapping(target = "confirmedRequests", ignore = true)
     @Mapping(target = "views", ignore = true)
+    @Mapping(target = "initiator", source = "initiatorId")
     EventFullDto toFullDto(Event event);
 
     @Mapping(target = "createdOn", ignore = true)
