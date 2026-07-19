@@ -1,4 +1,4 @@
-package ewm.core.comments.dto;
+package ewm.core.dto;
 
 import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -1,9 +1,7 @@
-package ewm.core.comments.dto;
+package ewm.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ewm.core.comments.model.CommentStatus;
-import ewm.core.dto.UserShortDto;
-import ewm.core.event.dto.EventPreviewDto;
+import ewm.core.model.CommentStatus;
 
 import java.time.LocalDateTime;
 

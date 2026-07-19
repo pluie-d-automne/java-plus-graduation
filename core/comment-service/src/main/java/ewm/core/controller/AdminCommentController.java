@@ -1,9 +1,9 @@
-package ewm.core.comments.controller;
+package ewm.core.controller;
 
-import ewm.core.comments.dto.AdminCommentSearchFilter;
-import ewm.core.comments.dto.CommentDto;
-import ewm.core.comments.dto.UpdateCommentStatusRequest;
-import ewm.core.comments.service.CommentService;
+import ewm.core.dto.AdminCommentSearchFilter;
+import ewm.core.dto.CommentDto;
+import ewm.core.dto.UpdateCommentStatusRequest;
+import ewm.core.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

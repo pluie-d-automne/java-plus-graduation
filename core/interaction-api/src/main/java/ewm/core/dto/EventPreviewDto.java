@@ -1,8 +1,6 @@
-package ewm.core.event.dto;
+package ewm.core.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ewm.core.category.model.Category;
-import ewm.core.dto.UserShortDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 public class EventPreviewDto {
         private Long id;
         private String annotation;
-        private Category category;
+        private CategoryDto category;
 
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime eventDate;

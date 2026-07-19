@@ -1,6 +1,6 @@
-package ewm.core.comments.dto;
+package ewm.core.dto;
 
-import ewm.core.comments.model.CommentStatus;
+import ewm.core.model.CommentStatus;
 import jakarta.validation.constraints.Min;
 import org.springframework.format.annotation.DateTimeFormat;
 

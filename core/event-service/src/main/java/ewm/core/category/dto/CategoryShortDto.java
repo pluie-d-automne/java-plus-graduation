@@ -3,7 +3,7 @@ package ewm.core.category.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record NewCategoryDto(
+public record CategoryShortDto(
         @NotBlank(message = "Название категории не может быть пустым")
         @Size(min = 1, max = 50, message = "Имя категории не должно превышать 50 символом")
         String name

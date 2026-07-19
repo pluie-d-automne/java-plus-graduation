@@ -1,7 +1,6 @@
 package ewm.core.category.controller;
 
-import ewm.core.dto.CategoryDto;
-import ewm.core.category.dto.NewCategoryDto;
+import ewm.core.category.dto.CategoryShortDto;
 import ewm.core.category.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class AdminCategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto addCategories(@Valid @RequestBody NewCategoryDto newCategoryDto) {
+    public ewm.core.dto.CategoryDto addCategories(@Valid @RequestBody CategoryShortDto newCategoryDto) {
         log.info("POST /admin/categories: {}", newCategoryDto);
         return adminCategoryService.addCategory(newCategoryDto);
     }
@@ -38,8 +37,8 @@ public class AdminCategoryController {
     }
 
     @PatchMapping("/{catId}")
-    public CategoryDto updateCategory(@PathVariable("catId") Long categoryId,
-                                      @Valid @RequestBody NewCategoryDto newCategoryDto) {
+    public ewm.core.dto.CategoryDto updateCategory(@PathVariable("catId") Long categoryId,
+                                                   @Valid @RequestBody CategoryShortDto newCategoryDto) {
         log.info("PATCH /admin/categories/{}: {}", categoryId, newCategoryDto);
         return adminCategoryService.updateCategory(categoryId, newCategoryDto);
     }

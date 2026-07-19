@@ -1,7 +1,7 @@
 management.endpoints.web.exposure.include: health, metrics, prometheus, info
 spring:
   application:
-    name: event-service
+    name: comment-service
   config:
     import: "configserver:"
   cloud:

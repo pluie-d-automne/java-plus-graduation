@@ -1,4 +1,4 @@
-package ewm.core.comments.dto;
+package ewm.core.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

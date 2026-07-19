@@ -1,8 +1,8 @@
-package ewm.core.comments.controller;
+package ewm.core.controller;
 
-import ewm.core.comments.dto.CommentDto;
-import ewm.core.comments.dto.CommentSearchParams;
-import ewm.core.comments.service.CommentService;
+import ewm.core.dto.CommentDto;
+import ewm.core.dto.CommentSearchParams;
+import ewm.core.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

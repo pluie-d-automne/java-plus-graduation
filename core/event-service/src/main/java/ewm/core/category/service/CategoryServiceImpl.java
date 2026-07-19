@@ -1,7 +1,6 @@
 package ewm.core.category.service;
 
-import ewm.core.dto.CategoryDto;
-import ewm.core.category.dto.NewCategoryDto;
+import ewm.core.category.dto.CategoryShortDto;
 import ewm.core.category.mapper.CategoryMapper;
 import ewm.core.category.model.Category;
 import ewm.core.category.repository.CategoryRepository;
@@ -27,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional
-    public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
+    public ewm.core.dto.CategoryDto addCategory(CategoryShortDto newCategoryDto) {
         log.info("Добавление новой категории: {}", newCategoryDto.name());
 
         Category category = categoryMapper.toEntity(newCategoryDto);
@@ -59,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
     // имя категории должно быть уникальным
     @Override
     @Transactional
-    public CategoryDto updateCategory(Long categoryId, NewCategoryDto categoryDto) {
+    public ewm.core.dto.CategoryDto updateCategory(Long categoryId, CategoryShortDto categoryDto) {
         log.info("Обновление категории с id: {}, новое имя: {}", categoryId, categoryDto.name());
 
         Category category = existsCategory(categoryId);
@@ -77,7 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getAllCategory(Integer from, Integer size) {
+    public List<ewm.core.dto.CategoryDto> getAllCategory(Integer from, Integer size) {
         Pageable pageable = PageRequest.of(from / size, size, Sort.by("id").ascending());
 
         return categoryRepository.findAll(pageable).stream()
@@ -86,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategoryById(Long catId) {
+    public ewm.core.dto.CategoryDto getCategoryById(Long catId) {
         Category category = existsCategory(catId);
 
         log.info("Получена категория с id = {}", catId);

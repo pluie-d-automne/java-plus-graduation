@@ -1,12 +1,12 @@
-package ewm.core.comments.service;
+package ewm.core.service;
 
-import ewm.core.comments.dto.AdminCommentSearchFilter;
-import ewm.core.comments.dto.CommentDto;
+import ewm.core.dto.AdminCommentSearchFilter;
+import ewm.core.dto.CommentDto;
 
-import ewm.core.comments.dto.CommentSearchParams;
-import ewm.core.comments.dto.PostCommentParam;
-import ewm.core.comments.dto.UpdateCommentParam;
-import ewm.core.comments.dto.UpdateCommentStatusRequest;
+import ewm.core.dto.CommentSearchParams;
+import ewm.core.dto.PostCommentParam;
+import ewm.core.dto.UpdateCommentParam;
+import ewm.core.dto.UpdateCommentStatusRequest;
 
 import java.util.List;
 

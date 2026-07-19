@@ -1,6 +1,6 @@
-package ewm.core.comments.repository;
+package ewm.core.repository;
 
-import ewm.core.comments.model.Comment;
+import ewm.core.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 

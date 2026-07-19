@@ -1,4 +1,4 @@
-package ewm.core.comments.model;
+package ewm.core.model;
 
 public enum CommentStatus {
     PENDING,

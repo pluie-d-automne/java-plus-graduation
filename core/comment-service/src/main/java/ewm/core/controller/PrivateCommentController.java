@@ -1,10 +1,10 @@
-package ewm.core;
+package ewm.core.controller;
 
-import ewm.core.comments.dto.CommentDto;
-import ewm.core.comments.dto.PostCommentDto;
-import ewm.core.comments.dto.PostCommentParam;
-import ewm.core.comments.dto.UpdateCommentParam;
-import ewm.core.comments.service.CommentService;
+import ewm.core.dto.CommentDto;
+import ewm.core.dto.PostCommentDto;
+import ewm.core.dto.PostCommentParam;
+import ewm.core.dto.UpdateCommentParam;
+import ewm.core.service.CommentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

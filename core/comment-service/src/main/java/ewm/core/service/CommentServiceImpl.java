@@ -1,24 +1,25 @@
-package ewm.core.comments.service;
+package ewm.core.service;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import ewm.core.comments.dto.AdminCommentSearchFilter;
-import ewm.core.comments.dto.CommentDto;
-import ewm.core.comments.dto.CommentSearchParams;
-import ewm.core.comments.dto.PostCommentParam;
-import ewm.core.comments.dto.UpdateCommentParam;
-import ewm.core.comments.dto.UpdateCommentStatusRequest;
-import ewm.core.comments.mapper.CommentMapper;
-import ewm.core.comments.model.Comment;
-import ewm.core.comments.model.CommentStatus;
-import ewm.core.comments.model.QComment;
-import ewm.core.comments.repository.CommentRepository;
+import ewm.core.client.EventClient;
+import ewm.core.dto.AdminCommentSearchFilter;
+import ewm.core.dto.CommentDto;
+import ewm.core.dto.CommentSearchParams;
+import ewm.core.dto.EventFullDto;
+import ewm.core.dto.PostCommentParam;
+import ewm.core.dto.UpdateCommentParam;
+import ewm.core.dto.UpdateCommentStatusRequest;
+import ewm.core.mapper.CommentMapper;
+import ewm.core.model.Comment;
+import ewm.core.model.CommentStatus;
+import ewm.core.model.QComment;
+import ewm.core.repository.CommentRepository;
 import ewm.core.dto.UserShortDto;
 import ewm.core.exception.ConflictException;
 import ewm.core.exception.NotAuthorized;
 import ewm.core.exception.NotFoundException;
 import ewm.core.exception.ValidationException;
-import ewm.core.event.repository.EventRepository;
 import ewm.core.client.UserClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,18 +41,19 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
     private final CommentRepository commentRepository;
     private final UserClient userClient;
-    private final EventRepository eventRepository;
+    private final EventClient eventClient;
+
 
     @Override
     @Transactional
     public CommentDto create(PostCommentParam postCommentParam) {
         Comment comment = commentMapper.postToComment(postCommentParam);
-        LocalDateTime eventDate = comment.getEvent().getEventDate();
         comment.setStatus(CommentStatus.PENDING);
         Comment savedComment = commentRepository.save(comment);
         log.info("Created new comment {}", savedComment);
         return commentMapper.toCommentDto(savedComment);
     }
+
 
     @Override
     @Transactional
@@ -70,6 +72,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toCommentDto(savedComment);
     }
 
+
     @Override
     @Transactional
     public void delete(Long userId, Long commentId) {
@@ -82,6 +85,7 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(comment);
     }
 
+
     @Override
     public List<CommentDto> findAllByAuthor(Long userId) {
         BooleanExpression byAuthorId = QComment.comment1.authorId.eq(userId);
@@ -93,13 +97,14 @@ public class CommentServiceImpl implements CommentService {
         return commentsDto;
     }
 
+
     @Override
     public List<CommentDto> findAllByEventAndAuthor(Long userId, Long eventId) {
         existsUser(userId);
         existsEvent(eventId);
 
         BooleanExpression byEventAndAuthorId = QComment.comment1.authorId.eq(userId)
-                .and(QComment.comment1.event.id.eq(eventId));
+                .and(QComment.comment1.eventId.eq(eventId));
         Iterable<Comment> comments = commentRepository.findAll(byEventAndAuthorId);
         List<CommentDto> commentsDto = StreamSupport.stream(comments.spliterator(), false)
                 .map(commentMapper::toCommentDto)
@@ -107,6 +112,7 @@ public class CommentServiceImpl implements CommentService {
 
         return commentsDto;
     }
+
 
     @Override
     public CommentDto findByIdAndAuthor(Long userId, Long commentId) {
@@ -119,6 +125,7 @@ public class CommentServiceImpl implements CommentService {
 
         return commentMapper.toCommentDto(comment);
     }
+
 
     @Override
     public List<CommentDto> getPublishedComments(CommentSearchParams params) {
@@ -144,7 +151,7 @@ public class CommentServiceImpl implements CommentService {
             predicate.and(qComment.comment.containsIgnoreCase(params.text()));
         }
         if (params.eventId() != null) {
-            predicate.and(qComment.event.id.eq(params.eventId()));
+            predicate.and(qComment.eventId.eq(params.eventId()));
         }
         if (params.rangeStart() != null) {
             predicate.and(qComment.createdOn.goe(params.rangeStart()));
@@ -160,6 +167,7 @@ public class CommentServiceImpl implements CommentService {
                 .toList();
     }
 
+
     @Override
     public CommentDto getPublishedComment(Long commentId) {
         Comment comment = existsComment(commentId);
@@ -169,6 +177,7 @@ public class CommentServiceImpl implements CommentService {
         }
         return commentMapper.toCommentDto(comment);
     }
+
 
     @Override
     public List<CommentDto> searchComments(AdminCommentSearchFilter filter) {
@@ -193,7 +202,7 @@ public class CommentServiceImpl implements CommentService {
         }
 
         if (filter.eventId() != null) {
-            predicate.and(qComment.event.id.eq(filter.eventId()));
+            predicate.and(qComment.eventId.eq(filter.eventId()));
         }
 
         if (filter.rangeStart() != null) {
@@ -217,11 +226,13 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toFullDtoList(comments);
     }
 
+
     @Override
     public CommentDto findCommentById(Long commentId) {
         log.info("Admin find comment id={}", commentId);
         return commentMapper.toCommentDto(existsComment(commentId));
     }
+
 
     @Override
     @Transactional
@@ -242,6 +253,7 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.toCommentDto(commentRepository.save(comment));
     }
 
+
     @Override
     @Transactional
     public void deleteComment(Long commentId) {
@@ -250,10 +262,12 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(commentId);
     }
 
+
     private Comment existsComment(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException(String.format("Comment with id=%d was not found", commentId)));
     }
+
 
     private void existsUser(Long userId) {
         List<UserShortDto> usersFound = userClient.getUsersByIds(List.of(userId));
@@ -263,8 +277,12 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
+
     private void existsEvent(Long eventId) {
-        eventRepository.findById(eventId).orElseThrow(
-                () -> new NotFoundException(String.format("Event with id=%d was not found", eventId)));
+        List<EventFullDto> eventFullDtos = eventClient.getEventsByIds(List.of(eventId));
+
+        if (eventFullDtos.isEmpty()) {
+            throw new NotFoundException(String.format("Event with id=%d was not found", eventId));
+        }
     }
 }

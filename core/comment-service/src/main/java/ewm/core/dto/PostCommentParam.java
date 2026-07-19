@@ -1,4 +1,4 @@
-package ewm.core.comments.dto;
+package ewm.core.dto;
 
 public record PostCommentParam(
         Long author,
