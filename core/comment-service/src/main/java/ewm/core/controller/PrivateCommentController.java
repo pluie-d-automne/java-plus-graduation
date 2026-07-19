@@ -24,26 +24,26 @@ import java.util.List;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}")
+@RequestMapping("/users/{userId}/comments")
 public class PrivateCommentController {
     private final CommentService commentService;
 
-    @GetMapping("/comments")
+    @GetMapping
     public List<CommentDto> findAllByUser(@PathVariable Long userId) {
         return commentService.findAllByAuthor(userId);
     }
 
-    @GetMapping("/comments/{commentId}")
+    @GetMapping("/{commentId}")
     public CommentDto findByIdAndAuthor(@PathVariable Long userId, @PathVariable Long commentId) {
         return commentService.findByIdAndAuthor(userId, commentId);
     }
 
-    @GetMapping("/events/{eventId}/comments")
+    @GetMapping("/events/{eventId}")
     public List<CommentDto> findAllByEventAndAuthor(@PathVariable Long userId, @PathVariable Long eventId) {
         return commentService.findAllByEventAndAuthor(userId, eventId);
     }
 
-    @PostMapping("/events/{eventId}/comments")
+    @PostMapping("/events/{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto create(@PathVariable Long userId,
                              @PathVariable Long eventId,
@@ -52,7 +52,7 @@ public class PrivateCommentController {
         return commentService.create(postCommentParam);
     }
 
-    @PatchMapping("/comments/{commentId}")
+    @PatchMapping("/{commentId}")
     public CommentDto update(@PathVariable Long userId,
                              @PathVariable Long commentId,
                              @Valid @RequestBody PostCommentDto postCommentDto) {
@@ -61,7 +61,7 @@ public class PrivateCommentController {
 
     }
 
-    @DeleteMapping("/comments/{commentId}")
+    @DeleteMapping("/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long userId, @PathVariable Long commentId) {
         commentService.delete(userId, commentId);
