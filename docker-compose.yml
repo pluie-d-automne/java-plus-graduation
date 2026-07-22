@@ -53,3 +53,45 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+
+  users-db:
+    image: postgres:16.1
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_DB=users
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -q -d main -U user" ]
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  requests-db:
+    image: postgres:16.1
+    ports:
+      - "5435:5432"
+    environment:
+      - POSTGRES_DB=requests
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -q -d main -U user" ]
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  comments-db:
+    image: postgres:16.1
+    ports:
+      - "5436:5432"
+    environment:
+      - POSTGRES_DB=comments
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -q -d main -U user" ]
+      timeout: 5s
+      interval: 5s
+      retries: 10

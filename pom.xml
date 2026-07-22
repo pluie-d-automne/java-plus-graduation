@@ -31,6 +31,7 @@
 
 		<!--       Plugins       -->
 		<maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+		<org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
 	</properties>
 
 	<dependencyManagement>

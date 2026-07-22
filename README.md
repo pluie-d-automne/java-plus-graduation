@@ -22,3 +22,6 @@ GET localhost:8888/service-name/default
 
 #### 3) Gateway Server
 Spring Cloud GateWay
+
+
+// Нужно добавить обновление participantConfirmed в ивентах при подтверждении запросов

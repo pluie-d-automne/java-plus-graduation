@@ -11,66 +11,63 @@ spring:
           connect-timeout: 90000  # 90 секунд
           response-timeout: 90s   # 90 секунд
       routes:
-        - id: core_main_service_admin
-          uri: lb://main-service
+        - id: request_client
+          uri: lb://request-service
           predicates:
-            - Path=/admin/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
-        - id: core_main_service_categories
-          uri: lb://main-service
+            - Path=/request-client/**
+        - id: user_client
+          uri: lb://user-service
           predicates:
-            - Path=/categories/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
-        - id: core_main_service_comments
-          uri: lb://main-service
+            - Path=/users/user-client/**
+        - id: event_client
+          uri: lb://event-service
+          predicates:
+            - Path=/event-client/**
+        - id: core_user_service_admin
+          uri: lb://user-service
+          predicates:
+            - Path=/admin/users/**
+        - id: core_comment_service_admin
+          uri: lb://comment-service
+          predicates:
+            - Path=/admin/comments/**
+        - id: core_event_service_admin_categories
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/categories/**
+        - id: core_event_service_admin_compilations
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/compilations/**
+        - id: core_event_service_admin
+          uri: lb://event-service
+          predicates:
+            - Path=/admin/events/**
+        - id: core_comment_service
+          uri: lb://comment-service
           predicates:
             - Path=/comments/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
-        - id: core_main_service_compilations
-          uri: lb://main-service
+        - id: core_event_service_categories
+          uri: lb://event-service
+          predicates:
+            - Path=/categories/**
+        - id: core_event_service_compilations
+          uri: lb://event-service
           predicates:
             - Path=/compilations/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
-        - id: core_main_service_users
-          uri: lb://main-service
-          predicates:
-            - Path=/users/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
-        - id: core_main_service_events
-          uri: lb://main-service
+        - id: core_event_service
+          uri: lb://event-service
           predicates:
             - Path=/events/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
-        - id: core_main_service_events
-          uri: lb://main-service
+        - id: core_comment_service_private
+          uri: lb://comment-service
           predicates:
-            - Path=/events/**
-          filters:
-            - name: Retry
-              args:
-                retries: 50
-                statuses: SERVICE_UNAVAILABLE
+            - Path=/users/{userId}/comments/**
+        - id: core_event_service_private
+          uri: lb://event-service
+          predicates:
+            - Path=/users/{userId}/events/**
+        - id: core_request_service_private
+          uri: lb://request-service
+          predicates:
+            - Path=/users/{userId}/requests/**
