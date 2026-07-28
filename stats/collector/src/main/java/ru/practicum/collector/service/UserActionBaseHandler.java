@@ -24,7 +24,7 @@ public class UserActionBaseHandler <D extends SpecificRecordBase> implements Use
     @Override
     public void handle(UserActionProto userActionProto) {
         SpecificRecordBase userActionAvro = mapToAvro(userActionProto);
-        ProducerRecord<Integer, SpecificRecordBase> record = new ProducerRecord<>(properties.getProperty("topic"),
+        ProducerRecord<Long, SpecificRecordBase> record = new ProducerRecord<>(properties.getProperty("topic"),
                 userActionProto.getEventId(),
                 userActionAvro);
 

@@ -6,5 +6,5 @@ server:
 kafka:
   bootstrap.servers: "localhost:9092"
   key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
-  value_serializer_class: "collector.service.handler.CollectorAvroSerializer"
+  value_serializer_class: "ru.practicum.collector.service.CollectorAvroSerializer"
   topic: "stats.user-actions.v1"

@@ -19,10 +19,10 @@ public class KafkaClientConfig {
     KafkaClient getClient() {
         return new KafkaClient() {
 
-            private Producer<Integer, SpecificRecordBase> producer;
+            private Producer<Long, SpecificRecordBase> producer;
 
             @Override
-            public Producer<Integer, SpecificRecordBase> getProducer() {
+            public Producer<Long, SpecificRecordBase> getProducer() {
                 if (producer == null) {
                     initProducer();
                 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class KafkaProducer {
     private final KafkaClient client;
-    private final Producer<Integer, SpecificRecordBase> producer;
+    private final Producer<Long, SpecificRecordBase> producer;
 
     public KafkaProducer(KafkaClient client) {
         this.client = client;
@@ -19,7 +19,7 @@ public class KafkaProducer {
         client.stop();
     }
 
-    public void send( ProducerRecord<Integer, SpecificRecordBase> record) {
+    public void send( ProducerRecord<Long, SpecificRecordBase> record) {
         producer.send(record);
     }
 }

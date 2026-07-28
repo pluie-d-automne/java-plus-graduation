@@ -38,7 +38,7 @@ Spring Cloud GateWay
 ### 2) Aggregator:
 * читает данные из топика `stats.user-actions.v1`,
 * рассчитывает сходство мероприятий,
-* записывает результаты в топик `stats.events-similarity.v1.`
+* записывает результаты в топик `stats.events-similarity.v1`.
 ### 3) Analyzer:
 * Читает данные из топиков:
   * `stats.user-actions.v1` — для хранения информации о последней оценке (максимальном весе действия) пользователей 
