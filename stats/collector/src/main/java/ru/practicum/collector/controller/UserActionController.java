@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
 import ru.practicum.collector.service.UserActionHandler;
-import ru.yandex.practicum.grpc.stats.action.UserActionProto;
-import ru.yandex.practicum.grpc.stats.collector.UserActionControllerGrpc;
+import ru.practicum.ewm.stats.proto.UserActionProto;
+import ru.practicum.ewm.stats.proto.UserActionControllerGrpc;
 
 @GrpcService
 @Slf4j

@@ -6,7 +6,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import ru.practicum.collector.utils.EnumMapper;
 import ru.practicum.ewm.stats.avro.ActionTypeAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
-import ru.yandex.practicum.grpc.stats.action.UserActionProto;
+import ru.practicum.ewm.stats.proto.UserActionProto;
 
 import java.time.Instant;
 import java.util.Properties;

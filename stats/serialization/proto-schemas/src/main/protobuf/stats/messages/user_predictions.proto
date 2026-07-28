@@ -3,7 +3,7 @@ syntax = "proto3";
 package stats.message.predictions;
 
 option java_multiple_files = true;
-option java_package = "ru.yandex.practicum.grpc.stats.request";
+option java_package = "ru.practicum.ewm.stats.proto";
 
 
 message UserPredictionsRequestProto {

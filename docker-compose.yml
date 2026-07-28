@@ -55,6 +55,20 @@ services:
 #      interval: 5s
 #      retries: 10
 
+    analyzer-db:
+      image: postgres:16.1
+      ports:
+        - "5437:5432"
+      environment:
+        - POSTGRES_DB=analyzer
+        - POSTGRES_USER=user
+        - POSTGRES_PASSWORD=password
+      healthcheck:
+        test: [ "CMD-SHELL", "pg_isready -q -d main -U user" ]
+        timeout: 5s
+        interval: 5s
+        retries: 10
+
   kafka:
     image: confluentinc/confluent-local:7.4.3
     hostname: kafka
