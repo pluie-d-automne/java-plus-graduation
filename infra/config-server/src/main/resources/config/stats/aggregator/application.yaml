@@ -1,14 +1,15 @@
 server:
   port: 0
 kafka:
-  consumer:
-    bootstrap_servers: "localhost:9092"
-    key_deserializer_class: "org.apache.kafka.common.serialization.StringDeserializer"
-    value_deserializer_class: "ru.practicum.aggregator.service.UserActionDeserializer"
-    group_id: "aggregator"
-    topic: "stats.user-actions.v1"
-  producer:
-    bootstrap_servers: "localhost:9092"
-    key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
-    value_serializer_class: "ru.practicum.aggregator.service.AggregatorAvroSerializer"
-    topic: "stats.events-similarity.v1"
+  properties:
+    consumer:
+      bootstrap_servers: "localhost:9092"
+      key_deserializer_class: "org.apache.kafka.common.serialization.StringDeserializer"
+      value_deserializer_class: "ru.practicum.aggregator.service.UserActionDeserializer"
+      group_id: "aggregator"
+      topic: "stats.user-actions.v1"
+    producer:
+      bootstrap_servers: "localhost:9092"
+      key_serializer_class: "org.apache.kafka.common.serialization.StringSerializer"
+      value_serializer_class: "ru.practicum.aggregator.service.AggregatorAvroSerializer"
+      topic: "stats.events-similarity.v1"

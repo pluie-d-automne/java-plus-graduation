@@ -1,5 +1,7 @@
 package ru.practicum.aggregator.service;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Properties;
 
 @Slf4j
+@Getter
+@AllArgsConstructor
 @Configuration
 @ConfigurationProperties("kafka")
 public class KafkaClientConfig implements KafkaClient {

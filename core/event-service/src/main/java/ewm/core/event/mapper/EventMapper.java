@@ -18,12 +18,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface EventMapper {
 
     @Mapping(target = "confirmedRequests", ignore = true)
-    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "initiator", source = "initiatorId")
     EventShortDto toShortDto(Event event);
 
     @Mapping(target = "confirmedRequests", ignore = true)
-    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "initiator", source = "initiatorId")
     EventFullDto toFullDto(Event event);
 

@@ -3,6 +3,7 @@ package ru.practicum.collector.service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.stereotype.Component;
 import ru.practicum.collector.utils.EnumMapper;
 import ru.practicum.ewm.stats.avro.ActionTypeAvro;
 import ru.practicum.ewm.stats.avro.UserActionAvro;
@@ -12,6 +13,7 @@ import java.time.Instant;
 import java.util.Properties;
 
 @Slf4j
+@Component
 public class UserActionBaseHandler <D extends SpecificRecordBase> implements UserActionHandler {
     private final KafkaProducer producer;
     private Properties properties;

@@ -2,6 +2,7 @@ package ru.practicum.analyzer.kafka;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -15,6 +16,7 @@ import java.util.Properties;
 @AllArgsConstructor
 @ConfigurationProperties("kafka")
 @Configuration
+@Slf4j
 public class KafkaConfig implements KafkaClient {
     private Consumer<Long, SpecificRecordBase> consumer;
     private Properties properties;
