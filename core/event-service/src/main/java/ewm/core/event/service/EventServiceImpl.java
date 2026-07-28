@@ -1,6 +1,6 @@
 package ewm.core.event.service;
 
-import client.StatClient;
+import client.AnalyzerClient;
 import com.querydsl.core.BooleanBuilder;
 import ewm.HitDto;
 import ewm.ParamDto;
@@ -49,7 +49,7 @@ public class EventServiceImpl implements EventService {
     private final UserClient userClient;
     private final EventMapper eventMapper;
     private final CategoryRepository categoryRepository;
-    private final StatClient statClient;
+    private final AnalyzerClient statClient;
 
     @Override
     public List<EventShortDto> getEventsPrivate(Long userId, Integer from, Integer size) {

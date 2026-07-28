@@ -17,3 +17,11 @@ spring:
     init.mode: always
 
 format.pattern.datetime: yyyy-MM-dd HH:mm:ss
+
+grpc:
+  client:
+    collector: # <- должно соответствовать значению в @GrpcClient
+      address: 'discovery:///collector' # адрес gRPC-сервиса
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext
