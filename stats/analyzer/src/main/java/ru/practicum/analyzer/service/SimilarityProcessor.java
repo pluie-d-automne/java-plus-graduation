@@ -80,9 +80,9 @@ public class SimilarityProcessor implements Runnable {
 
     private Double getActionWeight(ActionTypeAvro actionType) {
         return switch (actionType) {
-            case ActionTypeAvro.LIKE -> 1D;
-            case ActionTypeAvro.REGISTER -> 0.8;
-            case ActionTypeAvro.VIEW -> 0.4;
+            case ActionTypeAvro.ACTION_LIKE -> 1D;
+            case ActionTypeAvro.ACTION_REGISTER -> 0.8;
+            case ActionTypeAvro.ACTION_VIEW -> 0.4;
             default -> 0D;
         };
     }

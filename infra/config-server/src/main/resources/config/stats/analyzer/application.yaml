@@ -8,13 +8,13 @@ kafka:
     actions:
       "bootstrap.servers": "localhost:9092"
       topic: "stats.user-actions.v1"
-      key_deserializer_class: "org.apache.kafka.common.serialization.StringDeserializer"
+      key_deserializer_class: "org.apache.kafka.common.serialization.LongDeserializer"
       value_deserializer_class: "ru.practicum.analyzer.kafka.UserActionDeserializer"
       group_id: "analyzer.actions.reader"
     similarities:
       "bootstrap.servers": "localhost:9092"
       topic: "stats.events-similarity.v1"
-      key_deserializer_class: "org.apache.kafka.common.serialization.StringDeserializer"
+      key_deserializer_class: "org.apache.kafka.common.serialization.LongDeserializer"
       value_deserializer_class: "ru.practicum.analyzer.kafka.EventSimilarityDeserializer"
       group_id: "analyzer.similarities.reader"
 spring:
