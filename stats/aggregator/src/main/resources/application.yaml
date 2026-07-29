@@ -14,6 +14,6 @@ spring:
         max-interval: 6000
 eureka:
   client:
-    registerWithEureka: false
+    registerWithEureka: true
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname:discovery-server}:${eureka.instance.port:8761}/eureka/

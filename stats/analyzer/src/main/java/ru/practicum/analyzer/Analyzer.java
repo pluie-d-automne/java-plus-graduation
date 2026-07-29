@@ -16,12 +16,12 @@ public class Analyzer {
         final UserActionProcessor userActionProcessor = context.getBean(UserActionProcessor.class);
         final SimilarityProcessor similarityProcessor = context.getBean(SimilarityProcessor.class);
 
-        //  запускаем в отдельном потоке обработчик событий от пользовательских хабов
+        //  запускаем в отдельном потоке обработчик действий пользователей
         Thread userActionThread = new Thread(userActionProcessor);
         userActionThread.setName("InteractionThread");
         userActionThread.start();
 
-        // В текущем потоке начинаем обработку снимков состояния датчиков
+        // В текущем потоке запускаем обработчик сходств событий
         similarityProcessor.run();
     }
 }

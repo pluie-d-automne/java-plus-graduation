@@ -1,5 +1,8 @@
 server:
   port: 0
+grpc:
+  server:
+    port: 0
 kafka:
   properties:
     actions:
@@ -30,6 +33,3 @@ spring:
   sql:
     init:
       mode: always
-grpc:
-  server:
-    port: 0
