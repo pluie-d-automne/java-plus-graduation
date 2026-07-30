@@ -19,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
@@ -47,17 +48,33 @@ public class UserActionProcessor implements Runnable {
                 for (ConsumerRecord<Void, SpecificRecordBase> record : records) {
                     // Читает и записывает в БД
                     UserActionAvro userActionAvro = (UserActionAvro) record.value();
-                    Interaction interaction = Interaction.builder()
-                            .eventId(userActionAvro.getEventId())
-                            .userId(userActionAvro.getUserId())
-                            .rating(getActionWeight(userActionAvro.getActionType()))
-                            .timestamp(LocalDateTime.ofInstant(userActionAvro.getTimestamp(), ZoneId.of("UTC")))
-                            .build();
 
-                    log.info("Сохраняю новое взаимодействие пользователя с событием: {}", interaction);
-                    Interaction newInteraction = interactionRepository.save(interaction);
-                    log.info("Новое взаимодействие пользователя с событием сохранено: {}", newInteraction);
+                    log.info("Проверяю, есть ли уже такое взаимодействие в БД");
+                    Optional<Interaction> interactionFound = interactionRepository.findByUserIdAndEventId(userActionAvro.getUserId(), userActionAvro.getEventId());
 
+                    if (interactionFound.isEmpty()) {
+                        Interaction interaction = Interaction.builder()
+                                .eventId(userActionAvro.getEventId())
+                                .userId(userActionAvro.getUserId())
+                                .rating(getActionWeight(userActionAvro.getActionType()))
+                                .timestamp(LocalDateTime.ofInstant(userActionAvro.getTimestamp(), ZoneId.of("UTC")))
+                                .build();
+
+                        log.info("Сохраняю новое взаимодействие пользователя с событием: {}", interaction);
+                        Interaction newInteraction = interactionRepository.save(interaction);
+                        log.info("Новое взаимодействие пользователя с событием сохранено: {}", newInteraction);
+                    } else {
+                        Interaction interaction = interactionFound.get();
+                        log.info("Пользователь уже взаимодействовал с событием: {}", interaction);
+                        if (getActionWeight(userActionAvro.getActionType()) >= interaction.getRating()) {
+                            interaction.setRating(getActionWeight(userActionAvro.getActionType()));
+                            interaction.setTimestamp(LocalDateTime.ofInstant(userActionAvro.getTimestamp(), ZoneId.of("UTC")));
+                            Interaction newInteraction = interactionRepository.save(interaction);
+                            log.info("Вес взаимодействия увеличился => Запись в БД обновлена: {}", newInteraction);
+                        } else {
+                            log.info("Вес взаимодействия меньше предыдущего => ничего не меняем в БД");
+                        }
+                    }
                 }
             }
         } catch (WakeupException ignored) {

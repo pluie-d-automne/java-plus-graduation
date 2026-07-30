@@ -30,23 +30,26 @@ public class SimilarityAggregation {
         Long newUserId = userAction.getUserId();
         Long newEventId = userAction.getEventId();
         Double newEventUserWeight = getActionWeight(userAction.getActionType());
+        log.info("Обрабатываю действие пользователя {} с событием {} с весом {}", newUserId, newEventId, newEventUserWeight);
 
         if (eventUserWeights.containsKey(newEventId)) {
-            // Если очередное взаимодействие с мероприятием, обновляем сходство
+            log.info("Очередное взаимодействие с мероприятием {} => обновляем сходство", newEventId);
             Double oldEventUserWeight = eventUserWeights.get(newEventId).get(newUserId);
+            oldEventUserWeight = oldEventUserWeight == null ? 0D : oldEventUserWeight;
 
-            // 1. Проверяем, что событие увеличило вес мероприятия для пользователя
             if (oldEventUserWeight < newEventUserWeight) {
+                log.info("1. Cобытие увеличило вес мероприятия {} для пользователя {}: {} -> {}",
+                        newEventId, newUserId, oldEventUserWeight, newEventUserWeight);
 
-                // 2. Обновляем вес действия в матрице весов
                 eventUserWeights
                         .computeIfAbsent(newEventId, e -> new HashMap<>())
                         .put(newUserId, newEventUserWeight);
+                log.info("2. Вес действия в матрице весов обновлён: {}", eventUserWeights.get(newEventId).get(newUserId));
 
-                // 3. Обновляем сумму весов для этого события
+
                 eventWeight.put(newEventId, eventWeight.get(newEventId) + newEventUserWeight - oldEventUserWeight);
+                log.info("3. Обновлена сумма весов для этого события: {} -> {}", oldEventUserWeight, eventWeight.get(newEventId));
 
-                // 4. Пересчитываем для него сходства с другими мероприятиями
                 for (Long eventId : getEventsByUser(newUserId)) {
                     if (! eventId.equals(newEventId)) {
                         Double sum = Math.min(eventUserWeights.get(eventId).get(newUserId), newEventUserWeight);
@@ -62,19 +65,23 @@ public class SimilarityAggregation {
                                 .setScore(getEventPairMinWeightSum(eventId, newEventId) / (Math.sqrt(eventWeight.get(newEventId)) * Math.sqrt(eventWeight.get(eventId))))
                                 .setTimestamp(userAction.getTimestamp())
                                 .build());
+                        log.info("4. Пересчитано сходство: {}", result.getLast());
                     }
                 }
             }
 
             return result;
-        } else {// Если мероприятие новое, рассчитываем его сходство с остальными
-            // 1. Добавляем событие в матрицу весов
-            eventUserWeights.put(newEventId, Map.of(newUserId, newEventUserWeight));
+        } else {
+            log.info("Мероприятие {} новое => рассчитываем его сходство с остальными", newEventId);
 
-            // 2. Сохраняем для него сумму весов
+            eventUserWeights
+                    .computeIfAbsent(newEventId, e -> new HashMap<>())
+                    .put(newUserId, newEventUserWeight);
+            log.info("1. Cобытие добавлено в матрицу весов: {}", eventUserWeights.get(newEventId));
+
             eventWeight.put(newEventId, newEventUserWeight);
+            log.info("2. Для события сохранена сумма весов: {}", eventWeight.get(newEventId));
 
-            // 3. Рассчитываем для него сходства с другими мероприятиями
             for (Long eventId : getEventsByUser(newUserId)) {
                 if (! eventId.equals(newEventId)) {
                     Double sum = Math.min(eventUserWeights.get(eventId).get(newUserId), newEventUserWeight);
@@ -89,6 +96,7 @@ public class SimilarityAggregation {
                             .setScore(sum / (Math.sqrt(eventWeight.get(newEventId)) * Math.sqrt(eventWeight.get(eventId))))
                             .setTimestamp(userAction.getTimestamp())
                             .build());
+                    log.info("3. Пересчитано сходство: {}", result.getLast());
                 }
             }
 

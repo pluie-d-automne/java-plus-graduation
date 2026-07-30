@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
@@ -47,18 +48,33 @@ public class SimilarityProcessor implements Runnable {
                 ConsumerRecords<Void, SpecificRecordBase> records = consumer.poll(Duration.ofSeconds(5));
                 for (ConsumerRecord<Void, SpecificRecordBase> record : records) {
                     // Читает и записывает в БД
+
                     EventSimilarityAvro eventSimilarityAvro = (EventSimilarityAvro) record.value();
-                    Similarity similarity = Similarity.builder()
-                            .event1(eventSimilarityAvro.getEventA())
-                            .event2(eventSimilarityAvro.getEventB())
-                            .similarity(eventSimilarityAvro.getScore())
-                            .timestamp(LocalDateTime.ofInstant(eventSimilarityAvro.getTimestamp(), ZoneId.of("UTC")))
-                            .build();
 
-                    log.info("Сохраняю новое значение сходства для событий: {}", similarity);
-                    Similarity newSimilarity = similarityRepository.save(similarity);
-                    log.info("Новое значение сходства для событий сохранено: {}", newSimilarity);
+                    Optional<Similarity> similarityFound = similarityRepository.findByEvent1AndEvent2(eventSimilarityAvro.getEventA(), eventSimilarityAvro.getEventB());
+                    if (similarityFound.isEmpty()) {
+                        Similarity similarity = Similarity.builder()
+                                .event1(eventSimilarityAvro.getEventA())
+                                .event2(eventSimilarityAvro.getEventB())
+                                .similarity(eventSimilarityAvro.getScore())
+                                .timestamp(LocalDateTime.ofInstant(eventSimilarityAvro.getTimestamp(), ZoneId.of("UTC")))
+                                .build();
 
+                        log.info("Сохраняю новое значение сходства для событий: {}", similarity);
+                        Similarity newSimilarity = similarityRepository.save(similarity);
+                        log.info("Новое значение сходства для событий сохранено: {}", newSimilarity);
+                    } else {
+                        Similarity similarity = similarityFound.get();
+                        log.info("Для событий уже есть сохранённые веса: {}", similarity);
+                        if (eventSimilarityAvro.getScore() != similarity.getSimilarity().doubleValue()) {
+                            similarity.setSimilarity(eventSimilarityAvro.getScore());
+                            similarity.setTimestamp(LocalDateTime.ofInstant(eventSimilarityAvro.getTimestamp(), ZoneId.of("UTC")));
+                            Similarity newSimilarity = similarityRepository.save(similarity);
+                            log.info("Значение сходства изменилось => Запись в БД обновлена: {}", newSimilarity);
+                        } else {
+                            log.info("Значение сходства не изменилось => ничего не меняем в БД");
+                        }
+                    }
                 }
             }
         } catch (WakeupException ignored) {
