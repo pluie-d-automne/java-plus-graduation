@@ -1,5 +1,6 @@
 package client;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
@@ -21,6 +22,7 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class AnalyzerClient {
     @GrpcClient("analyzer")
     private RecommendationsControllerGrpc.RecommendationsControllerBlockingStub client;

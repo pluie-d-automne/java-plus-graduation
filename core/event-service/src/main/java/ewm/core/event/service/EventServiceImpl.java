@@ -8,6 +8,7 @@ import ewm.core.category.repository.CategoryRepository;
 import ewm.core.client.RequestClient;
 import ewm.core.dto.ConfirmedRequestCount;
 import ewm.core.dto.EventFullDto;
+import ewm.core.dto.ParticipationRequestDto;
 import ewm.core.dto.ParticipationStatus;
 import ewm.core.dto.UserShortDto;
 import ewm.core.exception.ConflictException;
@@ -21,6 +22,7 @@ import ewm.core.dto.EventState;
 import ewm.core.event.model.QEvent;
 import ewm.core.client.UserClient;
 import ewm.core.event.repository.EventRepository;
+import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +38,7 @@ import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -476,5 +479,39 @@ public class EventServiceImpl implements EventService {
         event.setParticipantConfirmed(cnt);
         Event eventUpdated = eventRepository.save(event);
         log.info("Updated event: {}", eventUpdated);
+    }
+
+    @Override
+    public List<EventFullDto> getEventRecommendationsForUser(Long userId) {
+        List<Long> recommendedEventIds = analyzerClient.getRecommendationsForUser(userId, 10)
+                .map(event -> event.getEventId())
+                .toList();
+
+        return eventRepository.findAllById(recommendedEventIds).stream()
+                .map(eventMapper::toFullDto)
+                .toList();
+    }
+
+    @Override
+    public void likeEvent(Long userId, Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                () -> new NotFoundException("Event " + eventId + "does not exist")
+        );
+
+        ParticipationRequestDto participation = requestClient.getEventRequests(userId, eventId).stream()
+                .filter(part -> part.status().equals(ParticipationStatus.CONFIRMED))
+                .findFirst().orElseThrow(
+                        () -> new BadRequestException("User " + userId + "has not participate in the event " + eventId)
+                );
+        if (event.getEventDate().isBefore(LocalDateTime.now())) {
+            Instant instant = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+            collectorClient.collectUserAction(eventId,
+                    userId,
+                    "ACTION_LIKE",
+                    Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).setNanos(instant.getNano()).build());
+        } else {
+            throw new BadRequestException("Event "+ eventId + "has not happened yet");
+        }
+
     }
 }

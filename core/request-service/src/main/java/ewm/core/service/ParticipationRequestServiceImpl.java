@@ -1,5 +1,7 @@
 package ewm.core.service;
 
+import client.CollectorClient;
+import com.google.protobuf.Timestamp;
 import ewm.core.client.EventClient;
 import ewm.core.dto.ConfirmedRequestCount;
 import ewm.core.dto.EventFullDto;
@@ -21,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +38,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final EventClient eventClient;
     private final ParticipationRequestRepository requestRepository;
     private final ParticipationRequestMapper requestMapper;
+    public final CollectorClient collectorClient;
 
 
     @Override
@@ -84,7 +90,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         request.setEventId(eventId);
 
         ParticipationRequest saveRequest = requestRepository.save(request);
-
+        Instant instant = LocalDateTime.now().toInstant(ZoneOffset.UTC);
+        collectorClient.collectUserAction(eventId,
+                userId,
+                "ACTION_REGISTER",
+                Timestamp.newBuilder().setSeconds(instant.getEpochSecond()).setNanos(instant.getNano()).build());
         log.info("Запрос на участие в событии добавлен");
 
         return requestMapper.mapToRequestDto(saveRequest);
