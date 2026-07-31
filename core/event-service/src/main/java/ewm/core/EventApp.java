@@ -7,10 +7,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@EnableFeignClients({"client", "ewm.core.client"})
+@EnableFeignClients({"ewm.core.client"})
+@ComponentScan(value = {"ewm", "client"})
 public class EventApp {
     public static void main(String[] args) {
         SpringApplication.run(EventApp.class, args);

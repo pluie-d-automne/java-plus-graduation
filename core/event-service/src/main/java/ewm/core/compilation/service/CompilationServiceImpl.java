@@ -131,13 +131,13 @@ public class CompilationServiceImpl implements CompilationService {
         Map<Long, Long> confirmedRequestsMap = requestClient.findAllConfirmedRequestsByEventId(eventIds).stream()
                 .collect(Collectors.toMap(ConfirmedRequestCount::eventId, ConfirmedRequestCount::count));
 
-        Map<Long, Long> viewsMap = eventService.getViewsMap(events, false);
+        Map<Long, Double> ratings = eventService.getRatingsMap(events);
 
         dto.forEach(comDto -> {
             if (comDto.events() != null) {
                 comDto.events().forEach(shortDto -> {
                     shortDto.setConfirmedRequests(confirmedRequestsMap.getOrDefault(shortDto.getId(), 0L));
-                    shortDto.setViews(viewsMap.getOrDefault(shortDto.getId(), 0L));
+                    shortDto.setRating(ratings.getOrDefault(shortDto.getId(), 0D));
                 });
             }
         });

@@ -1,0 +1,11 @@
+grpc:
+  server:
+    port: 0
+server:
+  port: 0
+kafka:
+  properties:
+    bootstrap.servers: "localhost:9092"
+    key_serializer_class: "org.apache.kafka.common.serialization.LongSerializer"
+    value_serializer_class: "ru.practicum.collector.service.CollectorAvroSerializer"
+    topic: "stats.user-actions.v1"
